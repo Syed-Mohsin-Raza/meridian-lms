@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: lms
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:loan_management}
+    username: ${POSTGRES_USER:lms_user}
+    password: ${POSTGRES_PASSWORD:lms_secret_2026}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate   # Flyway manages schema, Hibernate only validates
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  # Ensures Flyway bean is created before EntityManagerFactory
+  sql:
+    init:
+      mode: never
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2000ms
+
+    cache:
+      type: redis
+      redis:
+        time-to-live: 60000   # 60 seconds default
+        cache-null-values: false
+
+server:
+  port: 4000
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-this-is-a-dev-only-secret-replace-in-production-min-32-chars}
+    expiry-ms: ${JWT_EXPIRY_MS:604800000}  # 7 days
+
+  rate-limit:
+    enabled: true
+    capacity: 5
+    window-seconds: 60
+
+logging:
+  level:
+    root: INFO
+    com.meridian.lms: DEBUG
+    org.flywaydb: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    tags:
+      application: lms
+

@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 4
+      minimum-idle: 1
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+app:
+  rate-limit:
+    enabled: false

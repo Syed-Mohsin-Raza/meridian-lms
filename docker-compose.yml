@@ -1,0 +1,98 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lms-postgres
+    restart: unless-stopped
+    # Forces Postgres to use minimal cache buffers to save host RAM
+    command: postgres -c shared_buffers=16MB -c work_mem=2MB -c max_connections=30
+    environment:
+      POSTGRES_USER: lms_user
+      POSTGRES_PASSWORD: lms_secret_2026
+      POSTGRES_DB: loan_management
+    ports:
+      - "5432:5432"
+    volumes:
+      - lms_pg_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'      # Max 25% of 1 CPU core
+          memory: 128M     # Strict cap at 128MB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lms_user -d loan_management"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:latest
+    container_name: lms-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: 64M
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  redis:
+    image: redis:7-alpine
+    container_name: lms-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: 64M
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: lms-prometheus
+    restart: unless-stopped
+    # Lowers storage retention so Prometheus uses less memory/disk during tests
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=1d'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'      # Hard limit on dual-core CPU
+          memory: 150M     # Drastically cut down from your previous usage
+    depends_on:
+      - redis
+      - postgres
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: lms-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - lms_grafana_data:/var/lib/grafana
+    deploy:
+      resources:
+        limits:
+          cpus: '0.30'
+          memory: 256M     # Capped at 256MB (was using 788MB before)
+
+volumes:
+  lms_pg_data:
+  lms_grafana_data:
