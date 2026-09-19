@@ -1,5 +1,6 @@
 package com.meridian.lms.service;
 
+import com.meridian.lms.AbstractIntegrationTest;
 import com.meridian.lms.dto.response.DashboardKpiResponse;
 import com.meridian.lms.entity.Loan;
 import com.meridian.lms.entity.LoanType;
@@ -8,9 +9,7 @@ import com.meridian.lms.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -18,10 +17,9 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
+
 @Transactional
-class AnalyticsServiceTest {
+class AnalyticsServiceTest extends AbstractIntegrationTest {
 
     @Autowired AnalyticsService analyticsService;
     @Autowired LoanRepository loanRepository;

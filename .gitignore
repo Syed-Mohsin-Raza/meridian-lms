@@ -62,3 +62,4 @@ out/
 
 # Monitoring
 monitoring/*.local.yml
+openapi.json

@@ -1,6 +1,7 @@
 package com.meridian.lms.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meridian.lms.AbstractIntegrationTest;
 import com.meridian.lms.dto.request.LoginRequest;
 import com.meridian.lms.dto.request.RegisterRequest;
 import com.meridian.lms.repository.UserRepository;
@@ -19,10 +20,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
-@ActiveProfiles("test")
-class AuthControllerTest {
+@AutoConfigureMockMvc
+class AuthControllerTest extends AbstractIntegrationTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired UserRepository userRepository;

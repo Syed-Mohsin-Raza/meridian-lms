@@ -1,5 +1,6 @@
 package com.meridian.lms.service;
 
+import com.meridian.lms.AbstractIntegrationTest;
 import com.meridian.lms.dto.request.CreateEmployeeRequest;
 import com.meridian.lms.dto.response.EmployeeResponse;
 import com.meridian.lms.entity.User;
@@ -7,20 +8,17 @@ import com.meridian.lms.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
+
 @Transactional
-class EmployeeServiceTest {
+class EmployeeServiceTest extends AbstractIntegrationTest {
 
     @Autowired EmployeeService employeeService;
     @Autowired UserRepository userRepository;

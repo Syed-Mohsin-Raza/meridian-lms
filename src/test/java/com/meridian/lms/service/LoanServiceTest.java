@@ -1,5 +1,6 @@
 package com.meridian.lms.service;
 
+import com.meridian.lms.AbstractIntegrationTest;
 import com.meridian.lms.dto.request.LoanApplicationRequest;
 import com.meridian.lms.dto.request.ReviewLoanRequest;
 import com.meridian.lms.dto.response.LoanResponse;
@@ -20,10 +21,9 @@ import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
+
 @Transactional
-class LoanServiceTest {
+class LoanServiceTest extends AbstractIntegrationTest {
 
     @Autowired LoanService loanService;
     @Autowired LoanRepository loanRepository;

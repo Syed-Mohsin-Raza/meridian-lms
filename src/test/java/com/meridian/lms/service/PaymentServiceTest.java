@@ -1,5 +1,6 @@
 package com.meridian.lms.service;
 
+import com.meridian.lms.AbstractIntegrationTest;
 import com.meridian.lms.dto.request.LoanApplicationRequest;
 import com.meridian.lms.dto.request.PaymentRequest;
 import com.meridian.lms.dto.request.ReviewLoanRequest;
@@ -14,18 +15,15 @@ import com.meridian.lms.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
+
 @Transactional
-class PaymentServiceTest {
+class PaymentServiceTest extends AbstractIntegrationTest {
 
     @Autowired LoanService loanService;
     @Autowired PaymentService paymentService;
