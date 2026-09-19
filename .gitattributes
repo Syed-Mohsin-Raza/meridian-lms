@@ -1,2 +1,36 @@
+# Normalize line endings to LF in the repo
+# Git will convert to CRLF on Windows checkout,
+# and to LF on Linux/Mac checkout.
+* text=auto eol=lf
+
+# Java / Kotlin / XML / YAML / JSON / SQL
+*.java      text diff=java
+*.kt        text diff=kotlin
+*.xml       text
+*.yml       text
+*.yaml      text
+*.json      text
+*.sql       text
+*.md        text
+
+# Shell scripts must keep LF
+*.sh        text eol=lf
+mvnw        text eol=lf
+mvnw.cmd    text eol=crlf
+
+# Binary files — don't diff
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.pdf       binary
+*.jar       binary
+*.war       binary
+# Mark lock files as generated (not languages)
+package-lock.json   linguist-generated=true
+yarn.lock           linguist-generated=true
+pnpm-lock.yaml      linguist-generated=true
+
 /mvnw text eol=lf
 *.cmd text eol=crlf

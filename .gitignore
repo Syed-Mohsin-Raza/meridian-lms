@@ -1,36 +1,40 @@
-HELP.md
+# Build output
 target/
+build/
+out/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# Environment & secrets
+.env
+.env.local
+.env.*.local
 
-### IntelliJ IDEA ###
-.idea
+# IDE
+# IntelliJ IDEA
 .idea/
-*.iws
 *.iml
+*.iws
 *.ipr
 
-### NetBeans ###
+# VS Code
+.vscode/
+
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+# Eclipse / STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
 
 # Maven
 pom.xml.tag
@@ -42,10 +46,6 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 
-# Env files
-.env
-.env.local
-
 # Logs
 *.log
 logs/
@@ -53,13 +53,13 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+**/.DS_Store
 
-# Docker volumes (if any mounted locally)
+# Docker volumes (local bind mounts)
 postgres-data/
 
-# Build artifacts
-out/
-
-# Monitoring
+# Local-only overrides
 monitoring/*.local.yml
-openapi.json
+
+# Spring Initializr cruft
+HELP.md
