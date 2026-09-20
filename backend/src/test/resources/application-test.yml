@@ -15,3 +15,7 @@ spring:
 app:
   rate-limit:
     enabled: false
+
+meridian:
+  ai:
+    enabled: false

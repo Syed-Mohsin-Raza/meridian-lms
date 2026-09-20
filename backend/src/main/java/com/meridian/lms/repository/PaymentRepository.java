@@ -2,6 +2,7 @@ package com.meridian.lms.repository;
 
 import com.meridian.lms.entity.Payment;
 import com.meridian.lms.entity.Loan;
+import com.meridian.lms.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +19,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Optional<Payment> findByIdempotencyKey(String idempotencyKey);
 
     List<Payment> findByLoanAndStatus(Loan loan, Payment.PaymentStatus status);
+
+    List<Payment> findByCustomer(User customer);
 
     @Query(value = """
     SELECT TO_CHAR(paid_at, 'YYYY-MM') AS period,

@@ -39,6 +39,14 @@ spring:
         time-to-live: 60000   # 60 seconds default
         cache-null-values: false
 
+  ai:
+    openai:
+      api-key: ${meridian.ai.api-key}
+      chat:
+        options:
+          model: ${meridian.ai.model}
+          temperature: 0.3
+
 server:
   port: 4000
 
@@ -70,3 +78,28 @@ management:
     tags:
       application: lms
 
+meridian:
+  ai:
+    enabled: ${AI_ENABLED:true}
+    api-key: ${OPENAI_API_KEY:}
+    model: gpt-4o-mini
+    cache-ttl: 24h
+
+resilience4j:
+  retry:
+    instances:
+      openAiChat:
+        max-attempts: 3
+        wait-duration: 1s
+        retry-exceptions:
+          - org.springframework.web.client.ResourceAccessException
+        ignore-exceptions:
+          - org.springframework.web.client.HttpClientErrorException
+  circuitbreaker:
+    instances:
+      openAiChat:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+        register-health-indicator: true
