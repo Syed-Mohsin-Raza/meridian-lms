@@ -1,0 +1,9 @@
+# Rate limit override for RateLimitFilterTest.
+# Activated alongside `test` profile via @ActiveProfiles({"test", "rate-limit-test"}).
+
+app:
+  rate-limit:
+    enabled: true
+    capacity: 3
+    window-seconds: 60
+
