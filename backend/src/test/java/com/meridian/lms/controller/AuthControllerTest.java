@@ -30,7 +30,11 @@ class AuthControllerTest extends AbstractIntegrationTest {
 
     @BeforeEach
     void cleanup() {
-        userRepository.deleteAll();
+        // Only delete test-created users
+        userRepository.findByEmail("newuser@example.com").ifPresent(userRepository::delete);
+        userRepository.findByEmail("dup@example.com").ifPresent(userRepository::delete);
+        userRepository.findByEmail("login@example.com").ifPresent(userRepository::delete);
+        userRepository.findByEmail("me@example.com").ifPresent(userRepository::delete);
     }
 
     @Test

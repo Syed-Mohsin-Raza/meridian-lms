@@ -1,5 +1,6 @@
 package com.meridian.lms.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meridian.lms.AbstractIntegrationTest;
 import com.meridian.lms.dto.request.LoginRequest;
@@ -40,7 +41,14 @@ class LoanControllerTest extends AbstractIntegrationTest {
                         .content(objectMapper.writeValueAsString(login)))
                 .andReturn().getResponse().getContentAsString();
 
-        adminToken = objectMapper.readTree(response).get("token").asText();
+        JsonNode node = objectMapper.readTree(response);
+        JsonNode tokenNode = node.get("token");
+        if (tokenNode == null || tokenNode.isNull()) {
+            throw new IllegalStateException(
+                    "Admin login failed. Response: " + response
+                            + ". Likely the admin seed user was deleted by another test's @BeforeEach cleanup.");
+        }
+        adminToken = tokenNode.asText();
     }
 
     @Test
