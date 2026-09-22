@@ -57,6 +57,10 @@ spring:
 
 server:
   port: 4000
+  tomcat:
+    server-header: ""
+    remote-ip-header: ""
+
 
 app:
   jwt:

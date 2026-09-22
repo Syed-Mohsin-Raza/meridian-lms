@@ -1,7 +1,8 @@
 package com.meridian.lms.config;
 
 import com.meridian.lms.security.JwtAuthFilter;
-import jakarta.servlet.Filter;
+import com.meridian.lms.security.RateLimitFilter;
+import com.meridian.lms.security.SecurityHeadersFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,11 +26,16 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
-    private final Filter rateLimitFilter;
+    private final RateLimitFilter rateLimitFilter;
+    private final SecurityHeadersFilter securityHeadersFilter;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter, Filter rateLimitFilter) {
+    public SecurityConfig(
+            JwtAuthFilter jwtAuthFilter,
+            RateLimitFilter rateLimitFilter,
+            SecurityHeadersFilter securityHeadersFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.rateLimitFilter = rateLimitFilter;
+        this.securityHeadersFilter = securityHeadersFilter;
     }
 
     @Bean
@@ -52,7 +58,6 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        .requestMatchers("/actuator/health", "/actuator/info", "/actuator/prometheus").permitAll()
                         .requestMatchers("/api/v1/employees/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/audit/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/loans/types").permitAll()
@@ -64,10 +69,11 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // Both custom filters run before the standard auth filter.
-                // Order between them is undefined, but they don't interact.
+                // Anchor to registered filters only.
+                // securityHeadersFilter → jwtAuthFilter → rateLimitFilter
+                .addFilterBefore(securityHeadersFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterAfter(rateLimitFilter, JwtAuthFilter.class);
 
         return http.build();
     }
