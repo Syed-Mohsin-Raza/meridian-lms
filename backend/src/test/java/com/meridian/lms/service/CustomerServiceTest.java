@@ -9,12 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.*;
-
 
 @Transactional
 class CustomerServiceTest extends AbstractIntegrationTest {
@@ -45,9 +44,9 @@ class CustomerServiceTest extends AbstractIntegrationTest {
                 .email("e1@test.com").passwordHash("x").fullName("E1")
                 .role(User.Role.EMPLOYEE).creditScore(700).status(User.UserStatus.ACTIVE).build());
 
-        List<CustomerResponse> result = customerService.listAll();
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getEmail()).isEqualTo("c1@test.com");
+        Page<CustomerResponse> result = customerService.listAll(PageRequest.of(0, 20));
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().getFirst().getEmail()).isEqualTo("c1@test.com");
     }
 
     @Test

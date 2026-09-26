@@ -20,6 +20,7 @@ public class AnalyticsController {
     }
 
     @GetMapping("/dashboard")
+    @PreAuthorize("hasRole('ADMIN') or @permissions.has(authentication, 'view_analytics')")
     public ResponseEntity<DashboardKpiResponse> dashboard() {
         return ResponseEntity.ok(analyticsService.dashboard());
     }

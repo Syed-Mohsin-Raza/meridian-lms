@@ -13,6 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Set;
 
@@ -34,10 +37,9 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
-    public List<EmployeeResponse> listAll() {
-        return userRepository.findByRole(User.Role.EMPLOYEE).stream()
-                .map(e -> EmployeeResponse.from(e, permissionService.permissionsFor(e)))
-                .toList();
+    public Page<EmployeeResponse> listAll(Pageable pageable) {
+        return userRepository.findByRole(User.Role.EMPLOYEE, pageable)
+                .map(user -> EmployeeResponse.from(user, permissionService.permissionsFor(user)));
     }
 
     @Transactional(readOnly = true)

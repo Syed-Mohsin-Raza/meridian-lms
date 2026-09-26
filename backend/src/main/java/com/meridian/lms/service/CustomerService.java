@@ -7,10 +7,10 @@ import com.meridian.lms.exception.NotFoundException;
 import com.meridian.lms.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class CustomerService {
@@ -24,10 +24,9 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
-    public List<CustomerResponse> listAll() {
-        return userRepository.findByRole(User.Role.CUSTOMER).stream()
-                .map(CustomerResponse::from)
-                .toList();
+    public Page<CustomerResponse> listAll(Pageable pageable) {
+        return userRepository.findByRole(User.Role.CUSTOMER, pageable)
+                .map(CustomerResponse::from);
     }
 
     @Transactional(readOnly = true)

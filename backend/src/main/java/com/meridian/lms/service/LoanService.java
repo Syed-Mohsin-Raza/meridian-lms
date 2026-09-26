@@ -16,6 +16,8 @@ import com.meridian.lms.repository.UserRepository;
 import com.meridian.lms.util.AmortizationCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -268,5 +270,17 @@ public class LoanService {
                 CreditScoreService.DELTA_LOAN_REJECTED, "Loan rejected");
 
         loansRejected.increment();
+    }
+
+    /**
+     * Staff view: paginated list of all loans, optionally filtered by status.
+     */
+
+    @Transactional(readOnly = true)
+    public Page<LoanResponse> list(Pageable pageable, Loan.LoanStatus status) {
+        Page<Loan> page = (status == null)
+                ? loanRepository.findAll(pageable)
+                : loanRepository.findByStatus(status, pageable);
+        return page.map(LoanResponse::from);
     }
 }

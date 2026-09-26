@@ -6,6 +6,7 @@ import com.meridian.lms.dto.response.AuthResponse;
 import com.meridian.lms.dto.response.UserResponse;
 import com.meridian.lms.entity.User;
 import com.meridian.lms.exception.BadRequestException;
+import com.meridian.lms.exception.ForbiddenException;
 import com.meridian.lms.repository.UserRepository;
 import com.meridian.lms.security.JwtService;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,6 +79,15 @@ public class AuthService {
 
         User user = userRepository.findByEmail(req.getEmail())
                 .orElseThrow(() -> new BadRequestException("Invalid email or password"));
+
+        if (user.getStatus() == User.UserStatus.SUSPENDED) {
+            throw new ForbiddenException(
+                    "Your account has been suspended. Please contact an administrator.");
+        }
+
+        if (!passwordEncoder.matches(req.getPassword(), user.getPasswordHash())) {
+            throw new BadRequestException("Invalid email or password");
+        }
 
         String token = jwtService.generateToken(user);
 

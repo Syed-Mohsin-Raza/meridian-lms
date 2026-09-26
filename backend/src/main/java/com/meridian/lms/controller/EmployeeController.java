@@ -11,9 +11,15 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -35,9 +41,22 @@ public class EmployeeController {
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
     }
 
+//    @GetMapping
+//    public ResponseEntity<List<EmployeeResponse>> list() {
+//        return ResponseEntity.ok(employeeService.listAll());
+//    }
+
     @GetMapping
-    public ResponseEntity<List<EmployeeResponse>> list() {
-        return ResponseEntity.ok(employeeService.listAll());
+    public ResponseEntity<Page<EmployeeResponse>> list(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        return ResponseEntity.ok(employeeService.listAll(pageable));
+    }
+
+    @GetMapping("/debug/employee-only")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<String> employeeOnly(Authentication auth) {
+        return ResponseEntity.ok("You are employee: " + auth.getName());
     }
 
     @GetMapping("/{id}")

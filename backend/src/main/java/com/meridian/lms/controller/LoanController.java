@@ -6,7 +6,12 @@ import com.meridian.lms.dto.response.LoanResponse;
 import com.meridian.lms.entity.User;
 import com.meridian.lms.repository.UserRepository;
 import com.meridian.lms.service.LoanService;
+import com.meridian.lms.entity.Loan;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -68,11 +73,24 @@ public class LoanController {
      * Staff reviews a loan.
      */
     @PutMapping("/{id}/review")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
+    @PreAuthorize("hasRole('ADMIN') or @permissions.has(authentication, 'approve_loans')")
     public ResponseEntity<LoanResponse> review(
             @AuthenticationPrincipal UserDetails ud,
             @PathVariable Long id,
             @Valid @RequestBody ReviewLoanRequest req) {
         return ResponseEntity.ok(loanService.review(currentUser(ud), id, req));
+    }
+
+    /**
+     * Staff: paginated list of all loans with optional status filter.
+     */
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or @permissions.has(authentication, 'approve_loans')")
+    public ResponseEntity<Page<LoanResponse>> list(
+            @PageableDefault(size = 20, sort = "appliedAt", direction = Sort.Direction.DESC)
+            Pageable pageable,
+            @RequestParam(required = false) Loan.LoanStatus status) {
+        return ResponseEntity.ok(loanService.list(pageable, status));
     }
 }

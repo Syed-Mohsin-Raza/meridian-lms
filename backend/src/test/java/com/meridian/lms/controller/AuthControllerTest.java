@@ -41,7 +41,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
     void register_returns201_withToken() throws Exception {
         RegisterRequest req = RegisterRequest.builder()
                 .email("newuser@example.com")
-                .password("SecurePass1")
+                .password("SecurePass1!")
                 .fullName("New User")
                 .phone("+1234567890")
                 .build();
@@ -63,7 +63,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
     void register_duplicateEmail_returns400() throws Exception {
         RegisterRequest req = RegisterRequest.builder()
                 .email("dup@example.com")
-                .password("SecurePass1")
+                .password("SecurePass1!")
                 .fullName("Dup User")
                 .build();
 
@@ -83,7 +83,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
     void register_invalidEmail_returns400WithFieldErrors() throws Exception {
         RegisterRequest req = RegisterRequest.builder()
                 .email("not-an-email")
-                .password("SecurePass1")
+                .password("SecurePass1!")
                 .fullName("Test User")
                 .build();
 
@@ -99,7 +99,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
         // Register first
         RegisterRequest reg = RegisterRequest.builder()
                 .email("login@example.com")
-                .password("SecurePass1")
+                .password("SecurePass1!")
                 .fullName("Login User")
                 .build();
         mockMvc.perform(post("/api/v1/auth/register")
@@ -109,7 +109,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
         // Login
         LoginRequest login = LoginRequest.builder()
                 .email("login@example.com")
-                .password("SecurePass1")
+                .password("SecurePass1!")
                 .build();
 
         mockMvc.perform(post("/api/v1/auth/login")
@@ -143,7 +143,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
         // Register
         RegisterRequest reg = RegisterRequest.builder()
                 .email("me@example.com")
-                .password("SecurePass1")
+                .password("SecurePass1!")
                 .fullName("Me User")
                 .build();
         String response = mockMvc.perform(post("/api/v1/auth/register")
