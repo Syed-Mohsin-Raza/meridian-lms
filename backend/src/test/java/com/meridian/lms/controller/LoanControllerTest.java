@@ -4,12 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meridian.lms.AbstractIntegrationTest;
 import com.meridian.lms.dto.request.LoginRequest;
+import com.meridian.lms.entity.User;
+import com.meridian.lms.entity.User.Role;
+import com.meridian.lms.entity.User.UserStatus;
 import com.meridian.lms.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,12 +29,17 @@ class LoanControllerTest extends AbstractIntegrationTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private String adminToken;
 
     @BeforeEach
     void loginAsAdmin() throws Exception {
+        ensureAdminExists();
+
         LoginRequest login = LoginRequest.builder()
                 .email("admin@lms.com")
                 .password("Admin@1234")
@@ -46,9 +55,29 @@ class LoanControllerTest extends AbstractIntegrationTest {
         if (tokenNode == null || tokenNode.isNull()) {
             throw new IllegalStateException(
                     "Admin login failed. Response: " + response
-                            + ". Likely the admin seed user was deleted by another test's @BeforeEach cleanup.");
+                            + ". userRepository.count()=" + userRepository.count());
         }
         adminToken = tokenNode.asText();
+    }
+
+    /**
+     * Defensive: a prior test class or a shared-context ordering quirk may have
+     * left the seed admin missing. Recreate it if absent so this class has no
+     * dependency on test execution order.
+     */
+    private void ensureAdminExists() {
+        if (userRepository.findByEmail("admin@lms.com").isPresent()) {
+            return;
+        }
+
+        User admin = new User();
+        admin.setEmail("admin@lms.com");
+        admin.setPasswordHash(passwordEncoder.encode("Admin@1234"));
+        admin.setFullName("System Administrator");
+        admin.setRole(Role.ADMIN);
+        admin.setCreditScore(850);
+        admin.setStatus(UserStatus.ACTIVE);
+        userRepository.save(admin);
     }
 
     @Test
