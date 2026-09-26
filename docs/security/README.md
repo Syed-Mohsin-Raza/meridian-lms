@@ -10,12 +10,13 @@ OWASP ZAP baseline scan run on 2026-09-22 against the dockerized backend on
 | High | 0 |
 | Medium | 0 |
 | Low | 0 |
-| Informational | 0 |
+| Informational | 5 (ZAP internal warnings — see Insights section of zap-report.md) |
 | False Positives | 0 |
 | **PASS** (rules that ran clean) | **61** |
 
-**Zero findings across all passive scan rules.** This means the security
-posture of the API is clean for the checks ZAP baseline performs.
+**Zero security findings across all passive scan rules.** The 5 informational
+entries are ZAP internal warnings (network failures during the scan), not
+findings against the application.
 
 ## What ZAP Baseline Checks
 
@@ -68,8 +69,8 @@ The clean result comes from several design decisions:
    type Long`). No internal class names leaked.
 
 6. **CSP set explicitly** — ZAP rule 10038 (CSP Header Not Set) passes.
-   Our CSP permits Swagger UI inline scripts (needed for the docs page) but
-   restricts everything else.
+   Our CSP permits Swagger UI inline scripts (needed for the live API docs
+   we expose for reviewer exploration) but restricts everything else.
 
 7. **Anti-clickjacking via `X-Frame-Options: DENY`** — ZAP rule 10020 passes.
 
@@ -80,17 +81,18 @@ These are intentional trade-offs, documented for reviewers:
 - **CSRF disabled** — Stateless JWT auth with no session cookies. CSRF
   requires cookie-based authentication to be exploitable. Not applicable.
 
-- **CSP allows `'unsafe-inline'` and `'unsafe-eval'`** — Required for
-  Swagger UI. In production with `springdoc.api-docs.enabled=false`, the
-  CSP can be tightened to `script-src 'self'`.
+- **CSP allows `'unsafe-inline'` and `'unsafe-eval'`** — Required for the
+  live Swagger UI. If Swagger is ever disabled
+  (`springdoc.api-docs.enabled=false`), the CSP can be tightened to
+  `script-src 'self'`.
 
 - **HTTP, not HTTPS** — The docker-compose stack serves HTTP on port 4000
-  for local development. Production would terminate TLS at the load
-  balancer (ALB, nginx). HSTS header (rule 10035) is applied at the TLS
-  layer, not the app.
+  for local development. Production (Railway) terminates TLS at the edge.
+  HSTS header (rule 10035) is applied at the TLS layer, not the app.
 
-- **CORS `allowedOrigins: localhost:3000`** — Restricted to the frontend
-  origin. Not `*`. If the frontend moves, update `SecurityConfig`.
+- **CORS origins** — Locally `http://localhost:3000`. In production the
+  allowed origin is set via the `CORS_ALLOWED_ORIGINS` environment variable
+  on Railway, restricting to the deployed Vercel frontend URL.
 
 ## Reproducing the Scan
 
