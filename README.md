@@ -1,7 +1,7 @@
 # Meridian LMS
 
-![Backend CI](https://github.com/YOUR-USERNAME/Syed-Mohsin-Raza/actions/workflows/ci.yml/badge.svg)
-![Frontend CI](https://github.com/YOUR-USERNAME/Syed-Mohsin-Raza/actions/workflows/frontend-ci.yml/badge.svg)
+![Backend CI](https://github.com/Syed-Mohsin-Raza/meridian-lms/actions/workflows/ci.yml/badge.svg)
+![Frontend CI](https://github.com/Syed-Mohsin-Raza/meridian-lms/actions/workflows/frontend-ci.yml/badge.svg)
 
 A production-minded loan management platform with customer portal, admin dashboard, real-time analytics, and AI-assisted credit narratives.
 
