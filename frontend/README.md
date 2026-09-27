@@ -9,7 +9,7 @@ Next.js 15 · React 19 · TypeScript · Tailwind 3.4 · Recharts · SWR · react
 ## Setup
 
     npm install
-    echo "NEXT_PUBLIC_API_URL=http://localhost:4000" > .env.local
+    echo "NEXT_PUBLIC_API_BASE_URL=http://localhost:4000" > .env.local
     npm run dev
 
 Runs on `http://localhost:3000`. Backend must be running on `:4000`.
@@ -47,4 +47,4 @@ See [../docs/auth.md](../docs/auth.md) for the design and migration path.
 
 | Name | Required | Description |
 |---|---|---|
-| `NEXT_PUBLIC_API_URL` | Yes | Backend base URL (baked at build time) |
+| `NEXT_PUBLIC_API_BASE_URL` | Yes | Backend base URL (baked at build time) |
